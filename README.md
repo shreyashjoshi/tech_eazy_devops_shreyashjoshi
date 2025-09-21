@@ -154,9 +154,9 @@ sudo systemctl status techeazy-app
 
 # View application logs
 sudo journalctl -u techeazy-app -f
-```bash
+```
 
-###🧹 **Cleanup**
+<pre> ### 🧹 Cleanup </pre>
 
 To destroy all resources and avoid AWS charges:
 
