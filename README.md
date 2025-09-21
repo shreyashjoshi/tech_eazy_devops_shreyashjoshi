@@ -156,13 +156,7 @@ sudo systemctl status techeazy-app
 sudo journalctl -u techeazy-app -f
 ```
 
-### Application Health Check
-
-```bash
-# Check if application is running
-curl http://<PUBLIC_IP>/hello
-
-##🧹 Cleanup
+##🧹 **Cleanup**
 
 To destroy all resources and avoid AWS charges:
 
@@ -193,16 +187,11 @@ Enable debug logging in Terraform:
 export TF_LOG=DEBUG
 terraform apply
 ```
-
-## 📈 Cost Optimization
-
+## Future Improvements
 - **Development/Test**: Use `t2.micro` with auto-shutdown
 - **Production**: Use appropriate instance size based on load
 - **Monitoring**: Set up CloudWatch alarms for cost tracking
 - **Scheduling**: Use AWS Instance Scheduler for non-production environments
-
-
-## Future Improvements
 - ** Containerise the application
 - ** Implement CI for code changes
 - ** Implement CD for deployment
