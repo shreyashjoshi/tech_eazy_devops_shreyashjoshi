@@ -156,7 +156,7 @@ sudo systemctl status techeazy-app
 sudo journalctl -u techeazy-app -f
 ```
 
-<pre> ### 🧹 Cleanup </pre>
+### 🧹 Cleanup
 
 To destroy all resources and avoid AWS charges:
 
