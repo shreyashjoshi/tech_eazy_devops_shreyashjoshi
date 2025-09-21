@@ -162,9 +162,7 @@ sudo journalctl -u techeazy-app -f
 # Check if application is running
 curl http://<PUBLIC_IP>/hello
 
-
-
-### 🧹 Cleanup
+##🧹 Cleanup
 
 To destroy all resources and avoid AWS charges:
 
