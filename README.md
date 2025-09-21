@@ -10,21 +10,6 @@ This project demonstrates a production-ready DevOps pipeline that:
 - Implements cost optimization strategies for different environments
 - Uses Infrastructure as Code (IaC) best practices
 
-## 📁 Project Structure
-
-```
-tech_eazy_devops_shreyashjoshi/
-├── terraform/                 # Infrastructure as Code
-│   ├── main.tf               # Main Terraform configuration
-│   ├── variables.tf          # Variable definitions
-│   ├── outputs.tf            # Output values
-│   └── terraform.tfstate*    # Terraform state files
-├── scripts/
-│   └── user_data.sh          # EC2 bootstrap script
-├── backend/                  # Application artifacts
-└── README.md                 # This file
-```
-
 ## 🚀 Features
 
 ### Infrastructure Components
