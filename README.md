@@ -164,7 +164,7 @@ curl http://<PUBLIC_IP>/hello
 
 
 
-## 🧹 Cleanup
+### 🧹 Cleanup
 
 To destroy all resources and avoid AWS charges:
 
