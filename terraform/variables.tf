@@ -13,5 +13,7 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 variable "stage" {
-  default = "dev"
+  description = "Deployment stage ( dev, prod, test )"
+  type        = string
+  default     = "dev"
 }
