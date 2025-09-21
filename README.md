@@ -107,7 +107,7 @@ After deployment, get the public IP:
 terraform output instance_public_ip_javaapp
 ```
 
-Visit: `http://<PUBLIC_IP>` to access your application.
+Visit: `http://<PUBLIC_IP>/hello` to access your application.
 
 ## 🌍 Environment-Specific Deployments
 
@@ -160,33 +160,9 @@ sudo journalctl -u techeazy-app -f
 
 ```bash
 # Check if application is running
-curl http://<PUBLIC_IP>
+curl http://<PUBLIC_IP>/hello
 
-# Check specific endpoint (if available)
-curl http://<PUBLIC_IP>/health
-```
 
-## 🔧 Customization
-
-### Modify Application
-
-1. Update the repository URL in `scripts/user_data.sh`:
-   ```bash
-   REPO_URL="https://github.com/your-username/your-repo"
-   ```
-
-2. Modify service configuration in the user_data script
-
-3. Redeploy with `terraform apply`
-
-### Change Instance Type
-
-Update `terraform/variables.tf`:
-```hcl
-variable "instance_type" {
-  default = "t3.medium"  # Change from t2.micro
-}
-```
 
 ## 🧹 Cleanup
 
@@ -207,19 +183,10 @@ terraform destroy
 ## 🐛 Troubleshooting
 
 ### Common Issues
-
-1. **Application not accessible**
+ **Application not accessible**
    - Check security group rules
    - Verify EC2 instance is running
    - Check application logs: `sudo journalctl -u techeazy-app`
-
-2. **Terraform state issues**
-   - Run `terraform refresh` to sync state
-   - Check AWS console for resource status
-
-3. **Permission errors**
-   - Verify AWS credentials: `aws sts get-caller-identity`
-   - Check IAM permissions for EC2, VPC, and Security Groups
 
 ### Debug Mode
 
@@ -236,31 +203,10 @@ terraform apply
 - **Monitoring**: Set up CloudWatch alarms for cost tracking
 - **Scheduling**: Use AWS Instance Scheduler for non-production environments
 
-## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👨‍💻 Author
-
-**Shreyash Joshi**
-- GitHub: [@shreyashjoshi](https://github.com/shreyashjoshi)
-- Project: TechEazy DevOps Training
-
-## 📞 Support
-
-For questions or support, please:
-- Open an issue in this repository
-- Contact the project maintainer
-- Check the troubleshooting section above
-
----
-
-**Happy Deploying! 🚀**
+## Future Improvements
+- ** Containerise the application
+- ** Implement CI for code changes
+- ** Implement CD for deployment
+- ** Store artifacts over the artifactory post generation from CI
+- ** Deploy the application over kubernetes
