@@ -41,7 +41,7 @@ aws s3 cp "$LOG_FILE" "s3://${BUCKET_NAME}/${S3_KEY}" --region "$REGION" >> /var
 
 jar_name=$(ls -t "$APP_DIR/target/" | head -n1)
 
-Chmod +x "$APP_DIR/scripts/upload_logs.sh"
+chmod +x "$APP_DIR/scripts/upload_logs.sh"
 # Configure port forwarding since port 80 is used
 iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
 
