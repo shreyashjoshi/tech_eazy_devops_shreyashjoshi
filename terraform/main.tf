@@ -231,9 +231,6 @@ resource "aws_ssm_parameter" "s3_bucket_name" {
   value = module.s3_bucket.s3_bucket_id
   depends_on = [module.s3_bucket]
 }
-provider "aws" {
-  region = "us-east-1"  # Change as needed
-}
 
 # 1. Create IAM Policy allowing read access to Parameter Store
 resource "aws_iam_policy" "ssm_parameter_read" {
