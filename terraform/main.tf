@@ -18,10 +18,10 @@ data "aws_ami" "ubuntu" {
     values = ["x86_64"]
   }
 }
-# resource "aws_key_pair" "mykey" {
-#   key_name   = "my-keypair"
-#   public_key = file("C:\\Users\\\\.ssh\\id_rsa.pub")
-# }
+resource "aws_key_pair" "mykey" {
+  key_name   = "my-keypair"
+  public_key = file("C:\\Users\\ani\\.ssh\\id_rsa.pub")
+}
 resource "aws_instance" "JavaApp_EC2" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
@@ -30,13 +30,11 @@ resource "aws_instance" "JavaApp_EC2" {
 # key_name = aws_key_pair.mykey.key_name
   # Attach the security group allowing SSH and HTTP
   vpc_security_group_ids = [aws_security_group.instance_sg.id]
-  iam_instance_profile = [aws_iam_instance_profile.ec2-instance-profile.name,aws_iam_instance_profile.ec2_profile_ssm.name]
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   # Use the user_data script to bootstrap the instance
   #user_data = file("${path.module}/../scripts/user_data.sh")
-  user_data = templatefile("${path.module}/../scripts/user_data.sh", {
-    stage = var.stage
-  })
+  user_data = "${path.module}/../scripts/user_data.sh"
 
   tags = {
     Name = "JavaApp_EC2"
@@ -189,41 +187,34 @@ module "iam_policy_action" {
   ]
 }
   EOF
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
 }
 
 module "iam_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "example-ec2-role"
+  name = "ec2-role"
 
-  trust_policy_permissions = {
-    TrustEC2 = {
+ trust_policy_permissions = {
+    TrustRoleAndServiceToAssume = {
+      effect = "Allow"
+      actions = ["sts:AssumeRole"]
       principals = [{
-        type        = "Service"
-        identifiers = ["ec2.amazonaws.com"]
+        type = "Service"
+        identifiers =["ec2.amazonaws.com"]
       }]
     }
-  }
+ }
+   policies ={
+    custom = module.iam_policy_action.arn
+    custom_1 = module.iam_ssm_read_policy.arn
+   } 
+   #module.iam_ssm_read_policy.arn]}
 
-  policies = {
-    custom                     = module.iam_policy_action.arn
-  }
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
 }
-
-resource "aws_iam_instance_profile" "example" {
+resource "aws_iam_instance_profile" "ec2_profile" {
   name = "ec2-instance-profile"
-  role = module.iam_role.instance_profile_iam_instance_profile_name
-}
+  role = module.iam_role.name
+  }
 
 resource "aws_ssm_parameter" "s3_bucket_name" {
   name  = "S3BucketName"
@@ -232,49 +223,32 @@ resource "aws_ssm_parameter" "s3_bucket_name" {
   depends_on = [module.s3_bucket]
 }
 
-# 1. Create IAM Policy allowing read access to Parameter Store
-resource "aws_iam_policy" "ssm_parameter_read" {
-  name        = "SSMParameterReadPolicy"
-  description = "Allows reading parameters from SSM Parameter Store"
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
+# 1. Create IAM Policy allowing read access to Parameter Store
+module "iam_ssm_read_policy" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+
+  name        = "iam_ssm_read"
+  path        = "/"
+  description = "Read Only Access to specific S3 bucket"
+
+  policy = <<-EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
       {
-        Effect   = "Allow",
-        Action   = [
+        "Sid": "AllowOpenGetParameters",
+        "Effect": "Allow",
+        "Action": [
           "ssm:GetParameter",
           "ssm:GetParameters",
           "ssm:GetParametersByPath"
         ],
-        Resource = "*"
+        "Resource": "arn:aws:ssm:*:*:parameter/*"
       }
     ]
-  })
-}
-resource "aws_iam_role" "ec2_ssm_role" {
-  name = "EC2SSMParameterReadRole"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        },
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-}
-resource "aws_iam_role_policy_attachment" "attach_policy" {
-  role       = aws_iam_role.ec2_ssm_role.name
-  policy_arn = aws_iam_policy.ssm_parameter_read.arn
-}
-resource "aws_iam_instance_profile" "ec2_profile_ssm" {
-  name = "EC2SSMInstanceProfile"
-  role = aws_iam_role.ec2_ssm_role.name
+  }
+EOF
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "log_lifecycle" {
